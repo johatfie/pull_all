@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+usage()
+{
+    echo "usage: pull_all [[-c] [-b] | [-h] | [-y]]"
+}
+
+continue_on_error=0
+run_bundle_check=0
+run_yarn_check=0
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -b | --bundle )         run_bundle_check=1
+                                ;;
+        -c | --continue )       continue_on_error=1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        -y | --yarn )           run_yarn_check=1
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+done
+
+
+if [ $continue_on_error -eq 0 ]; then
+    set -e
+fi
+
+
+dirs=()
+
+
+dirs+=(~/projects/pmpgateway/appriss-fhir-integrator/)
+dirs+=(~/projects/pmpgateway/gateway-authorizer/)
+dirs+=(~/projects/pmpgateway/gateway-mock-service/)
+dirs+=(~/projects/pmpgateway/pmp-auth/)
+dirs+=(~/projects/pmpgateway/pmpgateway-asap-webapp/)
+dirs+=(~/projects/pmpgateway/pmpgateway-california-service/)
+dirs+=(~/projects/pmpgateway/pmpgateway-credential-emailer/)
+dirs+=(~/projects/pmpgateway/pmpgateway-database/)
+dirs+=(~/projects/pmpgateway/pmpgateway-hl7services-webapp/)
+dirs+=(~/projects/pmpgateway/pmpgateway-mirth/)
+dirs+=(~/projects/pmpgateway/pmpgateway-narx-score-schema/)
+dirs+=(~/projects/pmpgateway/pmpgateway-narxclient-test/)
+dirs+=(~/projects/pmpgateway/pmpgateway-narxclient-webapp/)
+dirs+=(~/projects/pmpgateway/pmpgateway-pmp-representation/)
+# dirs+=(~/projects/pmpgateway/pmpgateway-test/)
+dirs+=(~/projects/pmpgateway/pmpgateway-webapp/)
+dirs+=(~/projects/pmpgateway/smart-on-fhir-transform/)
+dirs+=(~/projects/pmpgateway/visano-score-monitoring/)
+
+
+
+for d in ${dirs[*]}
+do
+    pushd $d 1>/dev/null
+    printf "\n********************************************************************************\n"
+    pwd
+    printf "********************************************************************************\n"
+
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    git pull
+
+    if [ $branch != "develop" ] && [ $branch != "master" ]; then
+        echo Current Branch: $branch
+    fi
+
+    if [ $run_bundle_check -eq 1 ]; then
+        if [ -f Gemfile ]; then
+            bundle check
+
+            if [ $? -ne 0 ]; then
+                bundle install
+            fi
+        fi
+    fi
+
+    if [ $run_yarn_check -eq 1 ]; then
+        if [ -f yarn.lock ]; then
+            bundle exec yarn check
+
+            if [ $? -ne 0 ]; then
+                bundle exec yarn install
+            fi
+        fi
+    fi
+
+    popd 1>/dev/null
+done
+

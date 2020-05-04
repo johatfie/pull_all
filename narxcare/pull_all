@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+usage()
+{
+    echo "usage: pull_all [[-c] [-b] | [-h] | [-y]]"
+}
+
+continue_on_error=0
+run_bundle_check=0
+run_yarn_check=0
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -b | --bundle )         run_bundle_check=1
+                                ;;
+        -c | --continue )       continue_on_error=1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        -y | --yarn )           run_yarn_check=1
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+done
+
+
+if [ $continue_on_error -eq 0 ]; then
+    set -e
+fi
+
+
+dirs=()
+
+dirs+=(~/projects/narxcare/clinical-alerts-service/)
+dirs+=(~/projects/narxcare/narx_clean_address/)
+dirs+=(~/projects/narxcare/narx_com_interface/)
+dirs+=(~/projects/narxcare/narx_content_engine/)
+dirs+=(~/projects/narxcare/narx_model/)
+dirs+=(~/projects/narxcare/narx_report_interface/)
+dirs+=(~/projects/narxcare/narx_score_interface/)
+dirs+=(~/projects/narxcare/narxcare-com-provider-service/)
+dirs+=(~/projects/narxcare/narxcare-com/)
+dirs+=(~/projects/narxcare/narxcare-int-components/)
+#dirs+=(~/projects/narxcare/narxcare-int-demo-service/)
+#dirs+=(~/projects/narxcare/narxcare-int-provider-delegate-service/)
+dirs+=(~/projects/narxcare/narxcare-int-proxy-service/)
+dirs+=(~/projects/narxcare/narxcare-int-registration-service/)
+dirs+=(~/projects/narxcare/narxcare-reports/)
+dirs+=(~/projects/narxcare/narxcare-scores/)
+dirs+=(~/projects/narxcare/nfod-interface/)
+dirs+=(~/projects/narxcare/nfod-webapp/)
+dirs+=(~/projects/narxcare/open_beds_jwt/)
+
+
+for d in ${dirs[*]}
+do
+    pushd $d 1>/dev/null
+    printf "\n********************************************************************************\n"
+    pwd
+    printf "********************************************************************************\n"
+
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    git pull
+
+    if [ $branch != "develop" ] && [ $branch != "master" ]; then
+        echo Current Branch: $branch
+    fi
+
+    if [ $run_bundle_check -eq 1 ]; then
+        if [ -f Gemfile ]; then
+            bundle check
+
+            if [ $? -ne 0 ]; then
+                bundle install
+            fi
+        fi
+    fi
+
+    if [ $run_yarn_check -eq 1 ]; then
+        if [ -f yarn.lock ]; then
+            bundle exec yarn check
+
+            if [ $? -ne 0 ]; then
+                bundle exec yarn install
+            fi
+        fi
+    fi
+
+    popd 1>/dev/null
+done
+

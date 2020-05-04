@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -e
+
+
+dirs=()
+
+dirs+=(~/projects/hckube/nonprod-pmp-aware/)
+dirs+=(~/projects/hckube/nonprod-pmp-common-services/)
+dirs+=(~/projects/hckube/nonprod-pmp-gateway-pmpi/)
+dirs+=(~/projects/hckube/prod-pmp-aware/)
+dirs+=(~/projects/hckube/prod-pmp-common-services/)
+dirs+=(~/projects/hckube/prod-pmp-gateway-pmpi/)
+dirs+=(~/projects/hckube/prod-pmp-prep/)
+
+
+
+for d in ${dirs[*]}
+do
+    pushd $d 1>/dev/null
+    printf "\n********************************************************************************\n"
+    pwd
+    printf "********************************************************************************\n"
+
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    git pull
+
+    if [ $branch != "develop" ] && [ $branch != "master" ]; then
+        echo Current Branch: $branch
+    fi
+
+    popd 1>/dev/null
+done
+
+printf "\n"
