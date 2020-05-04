@@ -363,3 +363,10 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/git,vim,tags,macos,maven,gradle,eclipse,intellij,netbeans,visualstudiocode
+.idea/misc.xml
+.idea/modules.xml
+.idea/projects.iml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/sonarlint/
+.idea/inspectionProfiles/
