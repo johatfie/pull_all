@@ -34,15 +34,15 @@ fi
 
 dirs=()
 
-dirs+=(~/projects/pmpaware/autolicensing-api/)
+dirs+=(~/projects/pmpaware/pmpaware-webapp/)
+# dirs+=(~/projects/pmpaware/autolicensing-api/)
 dirs+=(~/projects/pmpaware/pmpaware-coherence/)
 dirs+=(~/projects/pmpaware/pmpaware-consolidation/)
 dirs+=(~/projects/pmpaware/pmpaware-database/)
-dirs+=(~/projects/pmpaware/pmpaware-export/)
+# dirs+=(~/projects/pmpaware/pmpaware-export/)
 dirs+=(~/projects/pmpaware/pmpaware-migration/)
 # dirs+=(~/projects/pmpaware/pmpaware-sam-gem/)
 dirs+=(~/projects/pmpaware/pmpaware-test/)
-dirs+=(~/projects/pmpaware/pmpaware-webapp/)
 dirs+=(~/projects/pmpaware/pmpaware_sam/)
 
 
