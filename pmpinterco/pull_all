@@ -34,6 +34,7 @@ fi
 
 dirs=()
 
+dirs+=(~/projects/pmpinterco/pmpinterco-pmp-test-stub/)
 dirs+=(~/projects/pmpinterco/pmpinterco-api-documents/)
 dirs+=(~/projects/pmpinterco/pmpinterco-database/)
 dirs+=(~/projects/pmpinterco/pmpinterco-interface-gem/)
